@@ -8,14 +8,14 @@ filelist = {'./uci/concrete/concrete.mat';'./uci/airfoil/airfoil.mat';'./uci/kin
 
 
 %%
-rBCM_nlpd = zeros(4,10);
+%rBCM_nlpd = zeros(4,10);
 GRBCM_nlpd = zeros(4,10);
 %NPAE_nlpd = zeros(4,10);
 
 GPoE_nlpd = zeros(4,10);
 
 
-rBCM_RMSE = zeros(4,10);
+%rBCM_RMSE = zeros(4,10);
 GRBCM_RMSE = zeros(4,10);
 %NPAE_RMSE = zeros(4,10);
 GPoE_RMSE = zeros(4,10);
@@ -42,6 +42,7 @@ for j= 1:6
     opts.meanfunc = []; opts.covfunc = @covSEard; opts.likfunc = @likGauss; opts.inffunc = @infGaussLik ;
     opts.numOptFC = 100;
     batch_size = 1000;
+    
 
     parfor i=1: cv0.NumTestSets
         trainIdx = cv0.training(i);
@@ -54,12 +55,18 @@ for j= 1:6
          % PoE, GPoE, BCM, RBCM, GRBCM, NPAE
         %[mu_GPoE,s2_GPoE,t_GPoE_predict] = aggregation_predict(xt,models,'GPoE') ;
         num_batches = ceil(size(xt,1)/batch_size);
+        l_batch = rem(size(xt,1),batch_size);
         if size(xt,1)> batch_size
             for k=1:num_batches
-                [mu_GRBCM_k,s2_GRBCM_k,t] = aggregation_predict(xt((k-1)*batch_size+1:(k)*batch_size,:),models,'GRBCM');
-                [mu_GPoE_k,s2_GPoE_k,t] = aggregation_predict(xt((k-1)*batch_size+1:(k)*batch_size,:),models,'GPoE');
-                %[mu_NPAE_k,s2_NPAE_k,t] = aggregation_predict(xt((k-1)*batch_size+1:(k)*batch_size,:),models,'NPAE');
-
+                if k < num_batches || l_batch==0
+                    
+                    [mu_GRBCM_k,s2_GRBCM_k,t] = aggregation_predict(xt((k-1)*batch_size+1:(k)*batch_size,:),models,'GRBCM');
+                    [mu_GPoE_k,s2_GPoE_k,t] = aggregation_predict(xt((k-1)*batch_size+1:(k)*batch_size,:),models,'GPoE');
+                else
+                  
+                    [mu_GRBCM_k,s2_GRBCM_k,t] = aggregation_predict(xt((k-1)*batch_size+1:(k-1)*batch_size+l_batch,:),models,'GRBCM');
+                    [mu_GPoE_k,s2_GPoE_k,t] = aggregation_predict(xt((k-1)*batch_size+1:(k-1)*batch_size+l_batch,:),models,'GPoE');
+                end  
                 if k==1
                     mu_GRBCM = mu_GRBCM_k;
                     s2_GRBCM = s2_GRBCM_k;
