@@ -4,7 +4,7 @@ rng(100);
 run('../gpml-matlab-v4.2-2018-06-11/startup.m')
 
 
-filelist = {'./uci/concrete/concrete.mat';'./uci/airline/airline.mat';'./uci/airfoil/airfoil.mat';'./uci/kin40k/kin40k.mat';'./uci/energy/energy.mat';'./uci/protein/protein.mat';};
+filelist = {'./uci/concrete/concrete.mat';'./uci/airfoil/airfoil.mat';'./uci/kin40k/kin40k.mat';'./uci/energy/energy.mat';'./uci/protein/protein.mat';'./uci/airline/airline.mat'};
 
 
 %%
@@ -24,7 +24,7 @@ GPoE_RMSE = zeros(4,10);
 
 %%
 
-for j= 1:4
+for j= 1:6
     data_file = load(filelist{j});
     data = data_file.data;
     data = normalize(data);
@@ -33,7 +33,7 @@ for j= 1:4
 
     cv0 = cvpartition(n, 'k', 10);
     sf2 = 1 ; ell = 1 ; sn2 = 0.1 ; 
-    partitionCriterion = 'random' ; % 'random', 'kmeans'
+    partitionCriterion = 'kmeans' ; % 'random', 'kmeans'
 
     % train
     opts.Xnorm = 'Y' ; opts.Ynorm = 'Y' ;
@@ -43,7 +43,7 @@ for j= 1:4
     opts.numOptFC = 100;
     batch_size = 1000;
 
-    for i=1: cv0.NumTestSets
+    parfor i=1: cv0.NumTestSets
         trainIdx = cv0.training(i);
         testIdx = cv0.test(i);
         x = data(trainIdx, 1:end-1);
