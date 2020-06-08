@@ -1,4 +1,4 @@
-# Generalised RBCM Baselines
+# Generalised RBCM Baselines (Matlab)
 
 Run
 
