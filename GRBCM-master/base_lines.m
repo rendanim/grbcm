@@ -24,7 +24,7 @@ GPoE_RMSE = zeros(4,10);
 
 %%
 
-for j= 1:6
+for j= 6:6
     data_file = load(filelist{j});
     data = data_file.data;
     data = normalize(data);
@@ -44,7 +44,7 @@ for j= 1:6
     batch_size = 1000;
     
 
-    parfor i=1: cv0.NumTestSets
+    for i=1: cv0.NumTestSets
         trainIdx = cv0.training(i);
         testIdx = cv0.test(i);
         x = data(trainIdx, 1:end-1);
