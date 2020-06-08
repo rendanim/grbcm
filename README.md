@@ -1,4 +1,4 @@
-# Generalised Roburst Bayesian Committe Machine Baseline
+# Generalised RBCM Baselines
 
 Run
 
